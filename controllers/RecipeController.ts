@@ -3,10 +3,33 @@ import { Request, Response } from 'express';
 
 export default ({
     getAll(req: Request, res: Response) {
+        const { limit, text, quantityOfJuice, ingredients, season } = req.query
+        let search = {}
+        if (quantityOfJuice) {
+            const searchQuantityOfJuice = { quantityOfJuice: quantityOfJuice }
+            search = { ...search, ...searchQuantityOfJuice }
+        }
+        if (ingredients) {
+            const searchIngredients = { 'ingredients.grocery_id': { $in: ingredients} }
+            search = { ...search, ...searchIngredients }
+        }
+        if (text) {
+            const textForIndex = "\"" + text + "\""
+            const searchText = { $text: { $search: textForIndex } }
+            search = { ...search, ...searchText }
+        }
+        if (season) {
+            const searchSeason = { season: season }
+            search = { ...search, ...searchSeason }
+        }
         try {
-            Recipe.find().then(recettes => {
-                res.send(recettes)
-            })
+            Recipe.find(search)
+                .sort({ title: 1})
+                .limit(Number(limit))
+                .exec()
+                .then(recettes => {
+                    res.send(recettes)
+                })
         } catch (e) {
             console.log(e)
         }

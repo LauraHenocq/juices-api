@@ -3,10 +3,33 @@ import { Request, Response } from 'express';
 
 export default ({
     getAll(req: Request, res: Response) {
+        const { limit, name, type, local, months } = req.query
+
+        let search = {}
+        if (name) {
+            const searchName = { name: name }
+            search = { ...search, ...searchName }
+        }
+        if (type) {
+            const searchType = { type: type }
+            search = { ...search, ...searchType }
+        }
+        if (local) {
+            const searchLocal = { local: local }
+            search = { ...search, ...searchLocal }
+        }
+        if (months) {
+            const searchMonths = { months: { $in: months } }
+            search = { ...search, ...searchMonths }
+        }
         try {
-            Grocery.find().then(fruitsOuLegumes => {
-                res.send(fruitsOuLegumes)
-            })
+            Grocery.find(search)
+                .sort({ name: 1})
+                .limit(Number(limit))
+                .exec()
+                .then(fruitsOuLegumes => {
+                    res.send(fruitsOuLegumes)
+                })
         } catch (e) {
             console.log(e)
         }
