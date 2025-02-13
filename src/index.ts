@@ -1,15 +1,19 @@
 import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import routes from "../routes/index";
+const cors = require('cors');
 
 const server = express()
+server.use(cors())
 server.use(express.json())
 routes(server);
 
 server.listen(4000, () => {
     console.log('Serveur lancé et écoute sur le port 4000')
 
-    mongoose.connect("mongodb://localhost:27017/juices")
+    mongoose.set('strictQuery', false)
+
+    mongoose.connect("mongodb://127.0.0.1:27017/juices")
         .catch(error => console.log(error));
 
 
