@@ -51,7 +51,7 @@ export default (server) => {
     await FavoriteController.getAll(req, res);
   });
 
-  server.post("/favorites", (req: Request, res: Response) => {
-    FavoriteController.create(req, res);
+  server.post("/favorites", async (req: Request, res: Response) => {
+    await FavoriteController.create(req, res);
   });
 };
