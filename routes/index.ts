@@ -54,4 +54,8 @@ export default (server) => {
   server.post("/favorites", async (req: Request, res: Response) => {
     await FavoriteController.create(req, res);
   });
+
+  server.delete("/favorites/:id", async (req: Request, res: Response) => {
+    await FavoriteController.delete(req, res);
+  });
 };
